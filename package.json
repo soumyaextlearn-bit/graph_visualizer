@@ -1,0 +1,17 @@
+{
+  "name": "graph_visualizer",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "soumya",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cytoscape": "^3.33.1",
+    "cytoscape-fcose": "^2.2.0",
+    "express": "^5.2.1"
+  }
+}

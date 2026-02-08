@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Graph Visualizer</title>
+
+    <!-- Cytoscape CDN -->
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <button id="toggleSidebar" class="icon-btn">☰</button>
+          <div>
+            <h1>Graph Visualizer</h1>
+            <p>Build, explore, and simulate graph algorithms</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN CONTENT -->
+      <div class="main">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+          <section>
+            <h3>Graph Input</h3>
+            <textarea
+              id="edges"
+              placeholder="Enter edges
+Example:
+1 2
+1 3
+2 4"
+            ></textarea>
+            <button onclick="renderGraph()">Render Graph</button>
+            <button onclick="resetTraversal()">Reset Graph</button>
+          </section>
+
+          <section>
+            <h3>Traversal</h3>
+            <input type="text" id="startNode" placeholder="Start node" />
+            <button onclick="runBFS()">Run BFS</button>
+            <button onclick="runDFS()">Run DFS</button>
+          </section>
+
+          <section id="info">
+            <strong><u>Node Info</u></strong>
+            <div id="details">Click a node</div>
+          </section>
+        </aside>
+
+        <!-- GRAPH -->
+        <main class="graph-area">
+          <div id="cy"></div>
+        </main>
+      </div>
+    </div>
+
+    <div id="popup" class="popup hidden"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
