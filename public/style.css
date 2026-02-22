@@ -187,3 +187,24 @@ button:hover {
 .icon-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
+
+#traversal-state {
+  margin-top: 16px;
+}
+
+#state-box {
+  padding: 10px;
+  background: #fafafa;
+  border: 3px solid #1f77b4;
+  border-radius: 4px;
+  font-size: 13px;
+  min-height: 60px;
+}
+
+.state-item{
+  padding: 2px 6px;
+  margin: 2px 0;
+  background: #e3f2fd;
+  border-radius: 3px;
+  
+}

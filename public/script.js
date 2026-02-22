@@ -1,5 +1,6 @@
 let cy;
 let isTraversing = false;
+let dfsStack = [];
 function isWeightedGraph() {
   return cy.edges().some((e) => e.data("weight") !== 1);
 }
@@ -316,20 +317,18 @@ function renderGraph() {
         selector: ".active",
         style: {
           "background-color": "#ff7f0e",
-          "opacity": 1,
-        }
+          opacity: 1,
+        },
       },
       {
         selector: ".traversed",
         style: {
           "line-color": "#2ca02c",
           "target-arrow-color": "#2ca02c",
-          "width": 3,
-          "opacity": 1,
-
-      }
-      }
-      
+          width: 3,
+          opacity: 1,
+        },
+      },
     ],
     layout: {
       name: "cose",
@@ -362,7 +361,7 @@ function renderGraph() {
   });
 
   cy.on("mouseout", "node", () => {
-    if(isTraversing) return; // Don't reset during traversal
+    if (isTraversing) return; // Don't reset during traversal
     // Reset everything
     cy.elements().removeClass("faded highlighted");
   });
@@ -412,14 +411,33 @@ function showPopup(message, type = "") {
 }
 function hidePopup(delay = 1500) {
   setTimeout(() => {
-   document.getElementById("popup").classList.add("hidden");
- },delay)
+    document.getElementById("popup").classList.add("hidden");
+  }, delay);
 }
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function resetTraversal() { 
+function updateTraversalStateTitle(text) {
+  document.getElementById("state-title").textContent = text;
+}
+
+function updateStateBox(items) {
+  const box = document.getElementById("state-box");
+  if (!items || items.length === 0) {
+    box.innerHTML = "<em>Empty</em>";
+    return;
+  }
+  box.innerHTML = items
+    .map((x) => `<div class="state-item">${x}</div>`)
+    .join("");
+}
+
+function clearStateBox() {
+  document.getElementById("state-box").innerHTML = "<em>Idle</em>";
+}
+
+function resetTraversal() {
   cy.elements().removeClass("visited active traversed faded highlighted");
 }
 
@@ -427,12 +445,11 @@ async function runBFS() {
   console.log("Running BFS...");
   isTraversing = true;
 
-  resetTraversal(); 
+  resetTraversal();
 
   const startId = document.getElementById("startNode").value.trim();
   const start = cy.getElementById(startId);
 
-  
   if (!start || !start.nonempty()) {
     alert("Start node not found!");
     return;
@@ -445,12 +462,16 @@ async function runBFS() {
   const visited = new Set();
   const queue = [];
 
+  updateTraversalStateTitle("BFS Queue (front → back)");
+  updateStateBox(queue.map((n) => n.id()));
+
   queue.push(start);
   visited.add(start.id());
   console.log(`Starting BFS from node ${start.id()}`);
 
   while (queue.length > 0) {
     const node = queue.shift();
+    updateStateBox(queue.map((n) => n.id()));
 
     // Highlight active node
     node.addClass("active");
@@ -464,12 +485,14 @@ async function runBFS() {
       if (!visited.has(nextNode.id())) {
         visited.add(nextNode.id());
         queue.push(nextNode);
+        updateStateBox(queue.map((n) => n.id()));
         edge.addClass("traversed");
-
       }
     });
   }
   isTraversing = false;
+  clearStateBox();
+  updateTraversalStateTitle("Traversal State");
   showPopup("BFS Complete!", "success");
   hidePopup(2000);
 }
@@ -478,6 +501,9 @@ async function runDFS() {
   console.log("Running DFS...");
   isTraversing = true;
   resetTraversal();
+  dfsStack = [];
+  updateTraversalStateTitle("DFS Stack (top → bottom)");
+  updateStateBox([]);
 
   const startId = document.getElementById("startNode").value.trim();
   const start = cy.getElementById(startId);
@@ -495,13 +521,16 @@ async function runDFS() {
   await dfsVisit(start, visited);
 
   isTraversing = false;
+  clearStateBox();
+  updateTraversalStateTitle("Traversal State");
   showPopup("DFS Complete!", "success");
   hidePopup(2000);
-
 }
 
 async function dfsVisit(node, visited) {
   visited.add(node.id());
+  dfsStack.push(node.id());
+  updateStateBox([...dfsStack].reverse());
 
   node.addClass("active");
   await sleep(700);
@@ -515,8 +544,9 @@ async function dfsVisit(node, visited) {
       await dfsVisit(nextnode, visited);
     }
   }
+  dfsStack.pop();
+  updateStateBox([...dfsStack].reverse());
 }
 
 // Auto-render on load
 renderGraph();
-
